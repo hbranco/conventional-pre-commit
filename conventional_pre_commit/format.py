@@ -93,6 +93,11 @@ def conventional_types(types=[]):
     return types
 
 
+def is_merge_branch(input):
+    # Expressão regular para corresponder ao padrão "Merge branch 'branch_name' of repo_url into branch_name"
+    pattern = r"^Merge branch '.*' of .+ into .+"
+    return bool(re.match(pattern, input))
+
 def is_conventional(input, types=DEFAULT_TYPES, optional_scope=True, scopes: Optional[List[str]] = None):
     """
     Returns True if input matches Conventional Commits formatting
