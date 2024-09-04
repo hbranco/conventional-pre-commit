@@ -66,6 +66,7 @@ See {Colors.LBLUE}https://git-scm.com/docs/git-commit/#_discussion{Colors.RESTOR
         if format.has_autosquash_prefix(message):
             return RESULT_SUCCESS
 
+    print(f"""BG AQUI: {message}""")
     if format.is_conventional(message, args.types, args.optional_scope, scopes):
         return RESULT_SUCCESS
     else:
