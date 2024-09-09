@@ -1,5 +1,7 @@
 # conventional-pre-commit
 
+Fork project https://github.com/compilerla/conventional-pre-commit
+
 A [`pre-commit`](https://pre-commit.com) hook to check commit messages for
 [Conventional Commits](https://conventionalcommits.org) formatting.
 
@@ -21,7 +23,7 @@ Add a new repo entry to your configuration file:
 repos:
   # - repo: ...
 
-  - repo: https://github.com/compilerla/conventional-pre-commit
+  - repo: https://github.com/hbranco/conventional-pre-commit
     rev: <git sha or tag>
     hooks:
       - id: conventional-pre-commit
@@ -148,7 +150,7 @@ Supply arguments on the command-line, or via the pre-commit `hooks.args` propert
 
 ```yaml
 repos:
-  - repo: https://github.com/compilerla/conventional-pre-commit
+  - repo: https://github.com/hbranco/conventional-pre-commit
     rev: <git sha or tag>
     hooks:
       - id: conventional-pre-commit
