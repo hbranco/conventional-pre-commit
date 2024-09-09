@@ -1,8 +1,8 @@
 import argparse
 import sys
 
-from conventional_pre_commit import format
-
+# from conventional_pre_commit import format
+import format
 RESULT_SUCCESS = 0
 RESULT_FAIL = 1
 
@@ -66,7 +66,10 @@ See {Colors.LBLUE}https://git-scm.com/docs/git-commit/#_discussion{Colors.RESTOR
         if format.has_autosquash_prefix(message):
             return RESULT_SUCCESS
 
-    if format.is_merge_branch(message):
+    if format.is_main_branch():
+        return RESULT_FAIL
+
+    if format.is_merge_commit():
         return RESULT_SUCCESS
 
     if format.is_conventional(message, args.types, args.optional_scope, scopes):

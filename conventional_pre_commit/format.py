@@ -1,4 +1,5 @@
 import re
+import os
 from typing import List, Optional
 
 CONVENTIONAL_TYPES = ["feat", "fix"]
@@ -93,10 +94,69 @@ def conventional_types(types=[]):
     return types
 
 
-def is_merge_branch(input):
-    # Expressão regular para corresponder ao padrão "Merge branch 'branch_name' of repo_url into branch_name"
-    pattern = r"^Merge branch '.*' of .+ into .+"
-    return bool(re.match(pattern, input, re.IGNORECASE))
+def get_git_directory():
+    submodule_git_dir = os.path.join(os.getcwd(), '.git')
+
+    if os.path.isfile(submodule_git_dir):
+        with open(submodule_git_dir, 'r') as f:
+            content = f.read().strip()
+            if content.startswith('gitdir: '):
+                git_dir = content.split('gitdir: ')[1]
+                return os.path.abspath(git_dir)
+    elif os.path.isdir(submodule_git_dir):
+        return submodule_git_dir
+    else:
+        print("Não foi possível encontrar o diretório Git.")
+        return None
+
+
+def check_git_status(git_dir):
+    if os.path.exists(os.path.join(git_dir, 'MERGE_HEAD')):
+        print("Current stage: MERGE")
+        return True
+    elif os.path.exists(os.path.join(git_dir, 'CHERRY_PICK_HEAD')):
+        return False
+    elif os.path.exists(os.path.join(git_dir, 'REBASE_HEAD')):
+        print("Current stage: REBASE")
+        return False
+    elif os.path.exists(os.path.join(git_dir, 'BISECT_LOG')):
+        return False
+    else:
+        print("Current stage: COMMIT")
+        return False
+
+
+def get_current_branch(git_dir):
+    """
+    Obtém o nome da branch atual.
+    """
+    head_file = os.path.join(git_dir, 'HEAD')
+
+    if os.path.exists(head_file):
+        with open(head_file, 'r') as f:
+            ref = f.read().strip()
+            if ref.startswith('ref:'):
+                # Extrair o nome da branch da referência
+                return ref.split('refs/heads/')[-1]
+            else:
+                return "DETACHED HEAD"
+    else:
+        return "HEAD file not found"
+
+def is_main_branch():
+    git_directory = get_git_directory()
+    current_branch = get_current_branch(git_directory)
+    if current_branch == 'main':
+        print(f"Current Branch: {current_branch}")
+        return True
+
+def is_merge_commit():
+    git_directory = get_git_directory()
+
+    if git_directory:
+      return check_git_status(git_directory)
+
+    return False
 
 def is_conventional(input, types=DEFAULT_TYPES, optional_scope=True, scopes: Optional[List[str]] = None):
     """
